@@ -1,0 +1,16 @@
+[package]
+name = "benteng-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "benteng"
+path = "src/main.rs"
+
+[dependencies]
+benteng-sdk-core = { path = "../sdk-core" }
+tokio.workspace = true
+anyhow.workspace = true
+clap = { version = "4.5", features = ["derive"] }

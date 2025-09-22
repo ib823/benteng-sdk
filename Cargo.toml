@@ -1,0 +1,65 @@
+[workspace]
+members = [
+    "sdk-core",
+    "edge-api",
+    "cli",
+    "transparency",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Benteng Team"]
+license = "Apache-2.0"
+repository = "https://github.com/benteng/benteng-sdk"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.42", features = ["full"] }
+async-trait = "0.1"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_cbor = "0.11"
+cbor4ii = { version = "0.3", features = ["serde1"] }
+
+# Cryptography
+ring = "0.17"
+aes-gcm = "0.10"
+chacha20poly1305 = "0.10"
+hkdf = "0.12"
+sha2 = "0.10"
+rand = "0.8"
+getrandom = "0.2"
+x25519-dalek = "2.0"
+ed25519-dalek = "2.0"
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Testing
+criterion = "0.5"
+proptest = "1.6"
+arbitrary = { version = "1.4", features = ["derive"] }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "debuginfo"
+
+[profile.dev]
+opt-level = 1
+overflow-checks = true
+
+[profile.test]
+opt-level = 2
+overflow-checks = true

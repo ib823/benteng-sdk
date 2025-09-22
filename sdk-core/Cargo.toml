@@ -1,0 +1,49 @@
+[package]
+name = "benteng-sdk-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[dependencies]
+# From workspace
+serde.workspace = true
+serde_json.workspace = true
+serde_cbor.workspace = true
+cbor4ii.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+sha2.workspace = true
+hkdf.workspace = true
+aes-gcm.workspace = true
+chacha20poly1305.workspace = true
+rand.workspace = true
+getrandom.workspace = true
+x25519-dalek.workspace = true
+
+# Additional
+zeroize = { version = "1.8", features = ["derive"] }
+base64 = "0.22"
+hex = "0.4"
+uuid = { version = "1.11", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# PQC - Using pqcrypto crates (more stable)
+pqcrypto-kyber = "0.8"
+pqcrypto-dilithium = "0.5"
+pqcrypto-traits = "0.3"
+tokio = { workspace = true, features = ["rt", "macros", "time"] }
+hmac = "0.12.1"
+
+[dev-dependencies]
+criterion.workspace = true
+proptest.workspace = true
+hex-literal = "0.4"
+
+[features]
+default = ["std"]
+std = []
+wasm = ["getrandom/js"]
