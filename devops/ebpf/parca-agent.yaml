@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: parca-agent-config
+data:
+  parca.yaml: |
+    object_storage:
+      bucket:
+        type: "filesystem"
+        config:
+          directory: "/var/lib/parca"
+    
+    debuginfo:
+      bucket:
+        type: "filesystem"
+        config:
+          directory: "/var/lib/parca-debuginfo"
+    
+    profiles:
+      sample_frequency: 100
+      perf_event_buffer_size: 64
+    
+    targets:
+    - job_name: "edge-api"
+      static_configs:
+      - targets: ["localhost:3000"]
+        labels:
+          service: "edge-api"
+          env: "production"
+    
+    - job_name: "transparency-log"
+      static_configs:
+      - targets: ["localhost:3001"]
+        labels:
+          service: "tlog"
+          env: "production"

@@ -37,6 +37,7 @@ pqcrypto-dilithium = "0.5"
 pqcrypto-traits = "0.3"
 tokio = { workspace = true, features = ["rt", "macros", "time"] }
 hmac = "0.12.1"
+sled = "0.34.7"
 
 [dev-dependencies]
 criterion.workspace = true
@@ -47,3 +48,8 @@ hex-literal = "0.4"
 default = ["std"]
 std = []
 wasm = ["getrandom/js"]
+
+
+[[bench]]
+name = "verify"
+harness = false

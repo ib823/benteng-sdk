@@ -27,7 +27,13 @@ hyper = "1.5"
 ciborium = "0.2.2"
 hex = "0.4.3"
 sha2.workspace = true
+chrono = "0.4.42"
+getrandom.workspace = true
+reqwest = "0.12.23"
+zip = "2.2"
+tempfile = "3.22.0"
 
 [dev-dependencies]
 reqwest = { version = "0.12.23", features = ["json"] }
 ciborium = "0.2.2"
+zip = { version = "2.2", features = ["deflate"] }

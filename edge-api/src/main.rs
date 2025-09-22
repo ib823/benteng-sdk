@@ -399,3 +399,10 @@ async fn main() {
         .await
         .unwrap();
 }
+
+mod salt_rotation;
+use salt_rotation::SaltRotator;
+
+// In main(), add:
+// let salt_rotator = Arc::new(SaltRotator::new(24)); // 24 hour rotation
+// tokio::spawn(salt_rotator.clone().start_rotation());

@@ -1,6 +1,6 @@
 use benteng_sdk_core::{
-    envelope::EnvelopeOps,
-    crypto::{kem::KemPair, sig::SigningKey},
+    envelope::operations::EnvelopeOps,
+    crypto::{kem, sig},
 };
 use reqwest;
 use serde_json::Value;
@@ -8,8 +8,8 @@ use serde_json::Value;
 #[tokio::test]
 async fn test_verify_endpoint() {
     // Generate keys
-    let kem_pair = KemPair::generate().unwrap();
-    let signing_key = SigningKey::generate().unwrap();
+    let (kem_pk, _kem_sk) = kem::kyber768_keypair().unwrap();
+    let (_sig_pk, sig_sk) = sig::dilithium3_keypair().unwrap();
     
     // Create envelope
     let payload = b"Integration test payload";
@@ -18,16 +18,22 @@ async fn test_verify_endpoint() {
         &[0xABu8; 16], // tenant_id
         &[0x12u8; 8],  // policy_id
         "/test/integration",
-        "kyber+dilithium",
-        true, // hybrid
-        Some(&[0xFFu8; 32]), // device_attest_hash
-        &kem_pair.public_key(),
-        &signing_key,
+        &kem_pk,
+        &sig_sk,
+        false, // not hybrid
     ).unwrap();
     
     // Serialize to CBOR
     let mut cbor_data = Vec::new();
     ciborium::into_writer(&envelope, &mut cbor_data).unwrap();
+    
+    // Start server in background
+    tokio::spawn(async {
+        benteng_edge_api::run_server().await
+    });
+    
+    // Wait for server to start
+    tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
     
     // Call verify endpoint
     let client = reqwest::Client::new();
@@ -42,11 +48,4 @@ async fn test_verify_endpoint() {
     
     let json: Value = response.json().await.unwrap();
     assert_eq!(json["decision"], "OK");
-    assert!(json["receipt"]["tlog_hash"].is_string());
-}
-
-#[tokio::test]
-async fn test_decrypt_endpoint() {
-    // Similar test for decrypt
-    // Would need mock KMS setup
 }

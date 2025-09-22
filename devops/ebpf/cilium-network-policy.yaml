@@ -1,0 +1,38 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: benteng-egress-control
+spec:
+  endpointSelector:
+    matchLabels:
+      app: edge-api
+  egress:
+  # Allow DNS
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+  
+  # Allow KMS endpoints
+  - toFQDNs:
+    - matchPattern: "*.kms.*.amazonaws.com"
+    - matchPattern: "*.hsm.*.azure.com"
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+  
+  # Allow transparency log witnesses
+  - toCIDRSet:
+    - cidr: 10.0.0.0/8  # Internal witnesses
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
+  
+  # Deny all other egress
+  - toEndpoints: []

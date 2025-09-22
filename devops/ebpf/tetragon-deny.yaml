@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: benteng-security-deny
+spec:
+  kprobes:
+  - call: "sys_execve"
+    selectors:
+    - matchNamespace: ["edge-api", "benteng"]
+      matchActions:
+      - action: Sigkill
+        argFilter:
+        - index: 0
+          operator: In
+          values: ["/bin/sh", "/bin/bash", "/bin/dash", "curl", "wget", "nc", "netcat"]
+  - call: "tcp_connect"
+    selectors:
+    - matchNamespace: ["edge-api"]
+      matchActions:
+      - action: Audit
+        rateLimit: "1/m"
+  - call: "sys_open"
+    selectors:
+    - matchPaths:
+      - "/etc/passwd"
+      - "/etc/shadow"
+      - "/root/"
+      - "/home/*/.*"
+      matchActions:
+      - action: Sigkill
